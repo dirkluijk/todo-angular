@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="nl" ng-app="TodoApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Angular Playground</title>
+
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <style type="text/css">
+        .spacer {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="container" ng-controller="TodoController">
+    <h1>TODO</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <form ng-submit="addTask()">
+                <input type="text" placeholder="Nieuwe taak...." ng-model="newTask.name" class="form-control input-lg">
+            </form>
+
+
+            <div class="text-right">
+                <buttton class="btn btn-danger btn-xs spacer" ng-click="removeAll()">Remove All</buttton>
+            </div>
+
+
+            <ul class="list-group spacer">
+                <li class="list-group-item"
+                    ng-class="{'list-group-item-danger': task.important && !task.completed, 'disabled': task.completed}"
+                    ng-repeat="task in tasks | orderBy: ['completed', '!important']">
+
+                    {{task.name}}
+
+                    <input type="checkbox" ng-model="task.completed" class="pull-right">
+
+                    <button class="btn btn-danger btn-xs pull-right" ng-click="removeTask($index)">
+                        <i class="glyphicon glyphicon-trash"></i>
+                    </button>
+
+                    <button class="btn btn-warning btn-xs pull-right" ng-if="!task.completed" ng-click="toggleImportant(task)">
+                        <i class="glyphicon glyphicon-exclamation-sign"></i>
+                    </button>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+
+</div>
+
+<script type="text/javascript" src="node_modules/angular/angular.min.js"></script>
+<script type="text/javascript">
+    angular
+            .module('TodoApp', [])
+            .controller('TodoController', function ($scope) {
+                $scope.tasks = [
+                    {name: "Lorem", important: false, completed: true},
+                    {name: "Ipsum", important: false, completed: false},
+                    {name: "Dolor", important: true, completed: false}
+                ];
+
+                $scope.newTask = createTask();
+
+                $scope.addTask = function () {
+                    if (!$scope.newTask.name) {
+                        alert('Geef de nieuwe taak een omschrijving');
+                        return;
+                    }
+
+                    $scope.tasks.push($scope.newTask);
+                    $scope.newTask = createTask();
+                };
+
+                $scope.removeTask = function (i) {
+                    $scope.tasks.splice(i, 1);
+                };
+
+                $scope.removeAll = function () {
+                    $scope.tasks = [];
+                };
+
+                $scope.toggleImportant = function (task) {
+                    task.important = !task.important;
+                };
+
+                function createTask() {
+                    return {name: '', important: false, completed: false};
+                }
+            });
+
+</script>
+</body>
+</html>
